@@ -198,9 +198,11 @@ int main(int argc, char *argv[]) {
         }
 
         if (serial_port == NULL || band_int == -1) {
-                printf("Configuration of the TNC on the Kenwood TM-D710\n");
-                printf("You must supply at least two arguments: the band (0 for Band A, 1 for Band B) and the serial port\n");
+                printf("Configuration of the TNC on the Kenwood TM-D710\n\n");
+                printf("You must supply at least two arguments: the band (0 for Band A, 1 for Band B) and the serial port\n\n");
                 printf("Options available:\n");
+		printf("                   -B, --band           the frequency band to use (0 for Band A or 1 for Band B)\n");
+		printf("                   -S, --serialport     the serial port to use for communication with the operation panel\n\n");
                 printf("                   -b, --baudrate       sets the HBAUD parameter (TNC speed, 1200 or 9600 baud)\n");
                 printf("                   -m, --maxframe       sets the MAXFRAME parameter (1-7)\n");
                 printf("                   -p, --paclen         sets the PACLEN parameter (0-255)\n");
@@ -208,8 +210,6 @@ int main(int argc, char *argv[]) {
                 printf("                   -s, --software-flow  configure the TNC for software flow-control\n");
                 printf("                   -h, --hardware-flow  configure the TNC for hardware flow-control\n");
 		printf("                   -c, --callsign       configure the callsign\n");
-		printf("                   -S, --serialport     the serial port to use for communication with the operation panel\n");
-		printf("                   -B, --band           the frequency band to use (0 for Band A or 1 for Band B)\n");
 		printf("                   -i,                  Initialize TNC (default is into Packet KISS mode)\n");
 		printf("                                             1 : TNC off\n");
 		printf("                                             2 : Packet command mode only\n");
