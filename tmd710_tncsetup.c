@@ -32,7 +32,7 @@
 #include <termios.h>
 #include <getopt.h>
 
-#define SERIAL_SPEED            B57600    /* the speed on the serial port (default = 9600baud) */
+#define SERIAL_SPEED            B9600    /* the speed on the serial port (default = 9600baud) */
 #define MAX_COMMAND_LENGTH      128
 
 #define VERSION			"1.12"
