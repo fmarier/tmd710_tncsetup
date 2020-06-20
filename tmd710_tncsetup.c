@@ -53,10 +53,10 @@ int main(int argc, char *argv[]) {
 	char band_0[7] = "TN 0,0\r";
 	char band_a[7] = "TN 2,0\r";
 	char band_b[7] = "TN 2,1\r";
-	char *command_mycall = NULL;
-	char *command_maxframe = NULL;
-	char *command_paclen = NULL;
-	char *command_txdelay = NULL;
+	char *command_mycall;
+	char *command_maxframe;
+	char *command_paclen;
+	char *command_txdelay;
 	char command_tnc_off[5] = "TC 1\r";
 	char command_soft_flow[9] = "XFLOW ON\r";
 	char command_hard_flow[10] = "XFLOW OFF\r";
@@ -338,13 +338,13 @@ int main(int argc, char *argv[]) {
 	tcsetattr(dev, TCSANOW, &oldtio); /* restore previous serial port settings */
 	close(dev);
 
-	if (command_mycall != NULL)
+	if (callsign != NULL)
 		free(command_mycall);
-	if (command_maxframe != NULL)
+	if (maxframe_int)
 		free(command_maxframe);
-	if (command_paclen != NULL)
+	if (paclen_int >= 0)
 		free(command_paclen);
-	if (command_txdelay != NULL)
+	if (txdelay_int >= 0)
 		free(command_txdelay);
 
 	exit(0);
