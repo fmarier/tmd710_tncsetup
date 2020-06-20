@@ -1,5 +1,6 @@
 /*
  * Copyright © 2010-2018 Guido Trentalancia IZ6RDB (iz6rdb@trentalancia.com)
+ * Copyright © 2010 David Ranch KI6ZHD (dranch@trinnet.net)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,13 @@
 #define SERIAL_SPEED            B57600    /* the speed on the serial port (default = 9600baud) */
 #define MAX_COMMAND_LENGTH      128
 
-#define VERSION			"1.06"
+#define VERSION			"1.12"
 
 int main(int argc, char *argv[]) {
 	int dev;
 	int flag_index; /* flag index in argv[] */
 	int clflag; /* holds codes for command line flags */
+	int initmode_int = 0;
 	int soft_flow = 0;
 	int hard_flow = 0;
 	int maxframe_int = 0;
@@ -48,6 +50,7 @@ int main(int argc, char *argv[]) {
 	int txdelay_int = -1;
 	int band_int = -1;
 	struct termios oldtio, newtio;
+	char band_0[7] = "TN 0,0\r";
 	char band_a[7] = "TN 2,0\r";
 	char band_b[7] = "TN 2,1\r";
 	char *command_mycall = NULL;
@@ -61,6 +64,7 @@ int main(int argc, char *argv[]) {
 	char command_baudrate_9600[11] = "HBAUD 9600\r";
 	char command_kiss_on[8] = "KISS ON\r";
 	char command_restart[8] = "RESTART\r";
+	char *initmode = NULL;
 	char *band = NULL;
 	char *serial_port = NULL;
 	char *maxframe = NULL;
@@ -79,11 +83,12 @@ int main(int argc, char *argv[]) {
 		{"band", 1, 0, 'B'},
 		{"serialport", 1, 0, 'S'},
                 {"version", 0, 0, 'V'},
+                {"initmode", 1, 0, 'i'},
                 {NULL, 0, 0, 0}
         };
 
         while (1) {
-                clflag = getopt_long(argc, argv, "m:p:b:c:d:B:S:hsV", long_options,
+                clflag = getopt_long(argc, argv, "m:p:b:c:d:B:S:i:hsV", long_options,
                                      &flag_index);
                 if (clflag == -1)
                         break;
@@ -125,6 +130,14 @@ int main(int argc, char *argv[]) {
 				exit(-1);
 			}
 			soft_flow = 1;
+			break;
+		case 'i':
+			initmode = optarg;
+			initmode_int = atoi(initmode);
+			if (initmode_int < 0 || initmode_int > 2) {
+				fprintf(stderr, "Error: invalid INITMODE parameter specified !\n");
+				exit(-1);
+			}
 			break;
 		case 'm':
                         if (maxframe) {
@@ -197,6 +210,9 @@ int main(int argc, char *argv[]) {
 		printf("                   -c, --callsign       configure the callsign\n");
 		printf("                   -S, --serialport     the serial port to use for communication with the operation panel\n");
 		printf("                   -B, --band           the frequency band to use (0 for Band A or 1 for Band B)\n");
+		printf("                   -i,                  Initialize TNC (default is into Packet KISS mode)\n");
+		printf("                                             1 : TNC off\n");
+		printf("                                             2 : Packet command mode only\n");
                 printf("                   -V, --version        display the version\n");
                 exit(1);
         }
@@ -259,12 +275,31 @@ int main(int argc, char *argv[]) {
 
 	write(dev, command_tnc_off, 5);
 	sleep(1);
+
+        /*shut off the TNC if requested */
+	if (initmode_int == 1) {
+	  write(dev, band_0, 7);
+          sleep(2);
+          exit(0);
+        }
+
+        /* D710 version 1.01,3179 needs 3-4 seconds to settle down.  It
+           also restores it's previous speed and state so you need to let
+           it settle before making any changes */
+
 	if (band_int == 0) {
 		write(dev, band_a, 7);
-		sleep(2);
+		sleep(3);
 	} else if(band_int == 1) {
 		write(dev, band_b, 7);
-		sleep(2);
+		sleep(3);
+	}
+	if (baudrate_int == 1200) {
+		write(dev, command_baudrate_1200, 11);
+		sleep(1);
+	} else if (baudrate_int == 9600) {
+		write(dev, command_baudrate_9600, 11);
+		sleep(1);
 	}
 	if (callsign != NULL) {
 		write(dev, command_mycall, strlen(command_mycall));
@@ -285,21 +320,20 @@ int main(int argc, char *argv[]) {
 		write(dev, command_hard_flow, 10);
 		sleep(1);
 	}
-	if (baudrate_int == 1200) {
-		write(dev, command_baudrate_1200, 11);
-		sleep(1);
-	} else if (baudrate_int == 9600) {
-		write(dev, command_baudrate_9600, 11);
-		sleep(1);
-	}
 	if (txdelay_int >= 0) {
 		write(dev, command_txdelay, strlen(command_txdelay));
 		sleep(1);
 	}
-	write(dev, command_kiss_on, 8);
-	sleep(1);
-	write(dev, command_restart, 8);
-	sleep(1);
+	if (initmode_int == 2) {
+                sleep(1);
+                exit (0);
+        }
+	if (initmode_int == 0) {
+	        write(dev, command_kiss_on, 8);
+        	sleep(1);
+        	write(dev, command_restart, 8);
+        	sleep(1);
+        }
 
 	tcsetattr(dev, TCSANOW, &oldtio); /* restore previous serial port settings */
 	close(dev);
