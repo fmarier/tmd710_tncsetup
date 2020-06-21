@@ -55,10 +55,10 @@ int main(int argc, char *argv[]) {
   char band_0[7] = "TN 0,0\r";
   char band_a[7] = "TN 2,0\r";
   char band_b[7] = "TN 2,1\r";
-  char *command_mycall;
-  char *command_maxframe;
-  char *command_paclen;
-  char *command_txdelay;
+  char *command_mycall = NULL;
+  char *command_maxframe = NULL;
+  char *command_paclen = NULL;
+  char *command_txdelay = NULL;
   char command_tnc_off[5] = "TC 1\r";
   char command_soft_flow[9] = "XFLOW ON\r";
   char command_hard_flow[10] = "XFLOW OFF\r";
@@ -286,12 +286,16 @@ int main(int argc, char *argv[]) {
   tcflush(dev, TCIFLUSH);
   tcsetattr(dev, TCSANOW, &newtio);
 
-  write(dev, command_tnc_off, 5);
+  if (write(dev, command_tnc_off, 5) == -1) {
+    return 1;
+  }
   sleep(1);
 
   /*shut off the TNC if requested */
   if (initmode_int == 1) {
-    write(dev, band_0, 7);
+    if (write(dev, band_0, 7) == -1) {
+      return 1;
+    }
     sleep(2);
     return 0;
   }
@@ -301,40 +305,60 @@ int main(int argc, char *argv[]) {
      it settle before making any changes */
 
   if (band_int == 0) {
-    write(dev, band_a, 7);
+    if (write(dev, band_a, 7) == -1) {
+      return 1;
+    }
     sleep(3);
   } else if (band_int == 1) {
-    write(dev, band_b, 7);
+    if (write(dev, band_b, 7) == -1) {
+      return 1;
+    }
     sleep(3);
   }
   if (baudrate_int == 1200) {
-    write(dev, command_baudrate_1200, 11);
+    if (write(dev, command_baudrate_1200, 11) == -1) {
+      return 1;
+    }
     sleep(1);
   } else if (baudrate_int == 9600) {
-    write(dev, command_baudrate_9600, 11);
+    if (write(dev, command_baudrate_9600, 11) == -1) {
+      return 1;
+    }
     sleep(1);
   }
   if (callsign != NULL) {
-    write(dev, command_mycall, strlen(command_mycall));
+    if (write(dev, command_mycall, strlen(command_mycall)) == -1) {
+      return 1;
+    }
     sleep(1);
   }
   if (maxframe_int) {
-    write(dev, command_maxframe, strlen(command_maxframe));
+    if (write(dev, command_maxframe, strlen(command_maxframe)) == -1) {
+      return 1;
+    }
     sleep(1);
   }
   if (paclen_int >= 0) {
-    write(dev, command_paclen, strlen(command_paclen));
+    if (write(dev, command_paclen, strlen(command_paclen)) == -1) {
+      return 1;
+    }
     sleep(1);
   }
   if (soft_flow) {
-    write(dev, command_soft_flow, 9);
+    if (write(dev, command_soft_flow, 9) == -1) {
+      return 1;
+    }
     sleep(1);
   } else if (hard_flow) {
-    write(dev, command_hard_flow, 10);
+    if (write(dev, command_hard_flow, 10) == -1) {
+      return 1;
+    }
     sleep(1);
   }
   if (txdelay_int >= 0) {
-    write(dev, command_txdelay, strlen(command_txdelay));
+    if (write(dev, command_txdelay, strlen(command_txdelay)) == -1) {
+      return 1;
+    }
     sleep(1);
   }
   if (initmode_int == 2) {
@@ -342,9 +366,13 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   if (initmode_int == 0) {
-    write(dev, command_kiss_on, 8);
+    if (write(dev, command_kiss_on, 8) == -1) {
+      return 1;
+    }
     sleep(1);
-    write(dev, command_restart, 8);
+    if (write(dev, command_restart, 8) == -1) {
+      return 1;
+    }
     sleep(1);
   }
 

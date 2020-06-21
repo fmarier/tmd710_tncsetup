@@ -1,6 +1,6 @@
 APP = tmd710_tncsetup
 OBJS = tmd710_tncsetup.o
-CFLAGS = -O2 -Wall -fstack-protector-strong -Wformat -Wformat-security -Werror=format-security -D_FORTIFY_SOURCE=2 -fPIE -pie -fstack-clash-protection -fcf-protection
+CFLAGS = -O2 -Wall -Werror -fstack-protector-strong -Wformat -Wformat-security -Werror=format-security -D_FORTIFY_SOURCE=2 -fPIE -pie -fstack-clash-protection -fcf-protection
 LDFLAGS = -Wl,-z,now -Wl,-z,relro -Wl,-pie -Wl,--hash-style=gnu
 
 all: $(APP)
