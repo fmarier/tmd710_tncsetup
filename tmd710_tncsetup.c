@@ -92,33 +92,33 @@ int main(int argc, char *argv[]) {
     switch (clflag) {
     case 'V':
       printf("tmd710_tncsetup version %s\n", VERSION);
-      exit(0);
+      return 0;
       break;
     case 'S':
       if (serial_port) {
         fprintf(stderr, "Error: multiple serial ports specified !\n");
-        exit(-1);
+        return -1;
       }
       serial_port = optarg;
       break;
     case 'B':
       if (band) {
         fprintf(stderr, "Error: multiple bands specified !\n");
-        exit(-1);
+        return -1;
       }
       band = optarg;
       band_int = atoi(band);
       if (band_int < 0 || band_int > 1) {
         fprintf(stderr, "Error: invalid band parameter specified ! Valid "
                         "values are 0 for Band A or 1 for Band B.\n");
-        exit(-1);
+        return -1;
       }
       break;
     case 'h':
       if (soft_flow) {
         fprintf(stderr, "Error: it is not possible to select both software "
                         "flow control and hardware flow control\n");
-        exit(-1);
+        return -1;
       }
       hard_flow = 1;
       break;
@@ -126,7 +126,7 @@ int main(int argc, char *argv[]) {
       if (hard_flow) {
         fprintf(stderr, "Error: it is not possible to select both software "
                         "flow control and hardware flow control\n");
-        exit(-1);
+        return -1;
       }
       soft_flow = 1;
       break;
@@ -135,61 +135,61 @@ int main(int argc, char *argv[]) {
       initmode_int = atoi(initmode);
       if (initmode_int < 0 || initmode_int > 2) {
         fprintf(stderr, "Error: invalid INITMODE parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       break;
     case 'm':
       if (maxframe) {
         fprintf(stderr, "Error: multiple MAXFRAME parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       maxframe = optarg;
       maxframe_int = atoi(maxframe);
       if (maxframe_int < 1 || maxframe_int > 7) {
         fprintf(stderr, "Error: invalid MAXFRAME parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       break;
     case 'p':
       if (paclen) {
         fprintf(stderr, "Error: multiple PACLEN parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       paclen = optarg;
       paclen_int = atoi(paclen);
       if (paclen_int < 0 || paclen_int > 255) {
         fprintf(stderr, "Error: invalid PACLEN parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       break;
     case 'b':
       if (baudrate) {
         fprintf(stderr, "Error: multiple HBAUD parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       baudrate = optarg;
       baudrate_int = atoi(baudrate);
       if (baudrate_int != 1200 && baudrate_int != 9600) {
         fprintf(stderr, "Error: invalid HBAUD parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       break;
     case 'd':
       if (txdelay) {
         fprintf(stderr, "Error: multiple TXDELAY parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       txdelay = optarg;
       txdelay_int = atoi(txdelay);
       if (txdelay_int < 0 || txdelay_int > 120) {
         fprintf(stderr, "Error: invalid TXDELAY parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       break;
     case 'c':
       if (callsign) {
         fprintf(stderr, "Error: multiple MYCALL parameter specified !\n");
-        exit(-1);
+        return -1;
       }
       callsign = optarg;
       break;
@@ -224,14 +224,14 @@ int main(int argc, char *argv[]) {
     printf("                                             2 : Packet command "
            "mode only\n");
     printf("                   -V, --version        display the version\n");
-    exit(1);
+    return 1;
   }
 
   if (callsign != NULL) {
     command_mycall = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
     if (command_mycall == 0) {
       printf("malloc error !\n");
-      exit(1);
+      return 1;
     }
     sprintf(command_mycall, "MYCALL %s\r", callsign);
   }
@@ -240,7 +240,7 @@ int main(int argc, char *argv[]) {
     command_maxframe = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
     if (command_maxframe == 0) {
       printf("malloc error !\n");
-      exit(1);
+      return 1;
     }
     sprintf(command_maxframe, "MAXFRAME %u\r", maxframe_int);
   }
@@ -249,7 +249,7 @@ int main(int argc, char *argv[]) {
     command_paclen = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
     if (command_paclen == 0) {
       printf("malloc error !\n");
-      exit(1);
+      return 1;
     }
     sprintf(command_paclen, "PACLEN %u\r", paclen_int);
   }
@@ -258,7 +258,7 @@ int main(int argc, char *argv[]) {
     command_txdelay = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
     if (command_txdelay == 0) {
       printf("malloc error !\n");
-      exit(1);
+      return 1;
     }
     sprintf(command_txdelay, "TXDELAY %u\r", txdelay_int);
   }
@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
   dev = open(serial_port, O_RDWR | O_NOCTTY);
   if (dev < 0) {
     perror(serial_port);
-    exit(1);
+    return 1;
   }
 
   tcgetattr(dev, &oldtio);        /* save current serial port settings */
@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
   if (initmode_int == 1) {
     write(dev, band_0, 7);
     sleep(2);
-    exit(0);
+    return 0;
   }
 
   /* D710 version 1.01,3179 needs 3-4 seconds to settle down.  It
@@ -339,7 +339,7 @@ int main(int argc, char *argv[]) {
   }
   if (initmode_int == 2) {
     sleep(1);
-    exit(0);
+    return 0;
   }
   if (initmode_int == 0) {
     write(dev, command_kiss_on, 8);
@@ -364,5 +364,5 @@ int main(int argc, char *argv[]) {
     free(command_txdelay);
   }
 
-  exit(0);
+  return 0;
 }
