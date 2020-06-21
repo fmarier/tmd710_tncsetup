@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
       {"serialport", 1, 0, 'S'},    {"version", 0, 0, 'V'},
       {"initmode", 1, 0, 'i'},      {NULL, 0, 0, 0}};
 
-  while (1) {
+  for (;;) {
     clflag = getopt_long(argc, argv, "m:p:b:c:d:B:S:i:hsV", long_options,
                          &flag_index);
     if (clflag == -1) {
@@ -94,7 +94,6 @@ int main(int argc, char *argv[]) {
     case 'V':
       printf("tmd710_tncsetup version %s\n", VERSION);
       return 0;
-      break;
     case 'S':
       if (serial_port) {
         fprintf(stderr, "Error: multiple serial ports specified !\n");
@@ -116,7 +115,7 @@ int main(int argc, char *argv[]) {
       }
       break;
     case 'h':
-      if (soft_flow) {
+      if (soft_flow != 0) {
         fprintf(stderr, "Error: it is not possible to select both software "
                         "flow control and hardware flow control\n");
         return -1;
@@ -124,7 +123,7 @@ int main(int argc, char *argv[]) {
       hard_flow = 1;
       break;
     case 's':
-      if (hard_flow) {
+      if (hard_flow != 0) {
         fprintf(stderr, "Error: it is not possible to select both software "
                         "flow control and hardware flow control\n");
         return -1;
@@ -236,7 +235,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (maxframe_int) {
+  if (maxframe_int != 0) {
     if (snprintf(command_maxframe, MAX_COMMAND_LENGTH, "MAXFRAME %lu\r",
                  maxframe_int) < 0) {
       printf("snprintf error !\n");
@@ -340,7 +339,7 @@ int main(int argc, char *argv[]) {
     }
     sleep(1);
   }
-  if (maxframe_int) {
+  if (maxframe_int != 0) {
     if (write(dev, command_maxframe, strlen(command_maxframe)) == -1) {
       return 1;
     }
@@ -352,12 +351,12 @@ int main(int argc, char *argv[]) {
     }
     sleep(1);
   }
-  if (soft_flow) {
+  if (soft_flow != 0) {
     if (write(dev, command_soft_flow, strlen(command_soft_flow)) == -1) {
       return 1;
     }
     sleep(1);
-  } else if (hard_flow) {
+  } else if (hard_flow != 0) {
     if (write(dev, command_hard_flow, strlen(command_hard_flow)) == -1) {
       return 1;
     }
