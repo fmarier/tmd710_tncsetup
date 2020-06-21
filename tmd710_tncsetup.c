@@ -37,6 +37,7 @@
 /* the speed on the serial port (default = 9600baud) */
 #define SERIAL_SPEED B9600
 #define MAX_COMMAND_LENGTH 128
+#define COMMAND_BUFFER_SIZE MAX_COMMAND_LENGTH * sizeof(char)
 
 #define VERSION "1.12"
 
@@ -229,39 +230,55 @@ int main(int argc, char *argv[]) {
   }
 
   if (callsign != NULL) {
-    command_mycall = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
+    command_mycall = (char *)malloc(COMMAND_BUFFER_SIZE);
     if (command_mycall == 0) {
       printf("malloc error !\n");
       return 1;
     }
-    sprintf(command_mycall, "MYCALL %s\r", callsign);
+    if (snprintf(command_mycall, MAX_COMMAND_LENGTH, "MYCALL %s\r", callsign) <
+        0) {
+      printf("snprintf error !\n");
+      return 1;
+    }
   }
 
   if (maxframe_int) {
-    command_maxframe = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
+    command_maxframe = (char *)malloc(COMMAND_BUFFER_SIZE);
     if (command_maxframe == 0) {
       printf("malloc error !\n");
       return 1;
     }
-    sprintf(command_maxframe, "MAXFRAME %u\r", maxframe_int);
+    if (snprintf(command_maxframe, MAX_COMMAND_LENGTH, "MAXFRAME %u\r",
+                 maxframe_int) < 0) {
+      printf("snprintf error !\n");
+      return 1;
+    }
   }
 
   if (paclen_int >= 0) {
-    command_paclen = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
+    command_paclen = (char *)malloc(COMMAND_BUFFER_SIZE);
     if (command_paclen == 0) {
       printf("malloc error !\n");
       return 1;
     }
-    sprintf(command_paclen, "PACLEN %u\r", paclen_int);
+    if (snprintf(command_paclen, MAX_COMMAND_LENGTH, "PACLEN %u\r",
+                 paclen_int) < 0) {
+      printf("snprintf error !\n");
+      return 1;
+    }
   }
 
   if (txdelay_int >= 0) {
-    command_txdelay = (char *)malloc(MAX_COMMAND_LENGTH * sizeof(char));
+    command_txdelay = (char *)malloc(COMMAND_BUFFER_SIZE);
     if (command_txdelay == 0) {
       printf("malloc error !\n");
       return 1;
     }
-    sprintf(command_txdelay, "TXDELAY %u\r", txdelay_int);
+    if (snprintf(command_txdelay, MAX_COMMAND_LENGTH, "TXDELAY %u\r",
+                 txdelay_int) < 0) {
+      printf("snprintf error !\n");
+      return 1;
+    }
   }
 
   dev = open(serial_port, O_RDWR | O_NOCTTY);
@@ -271,7 +288,7 @@ int main(int argc, char *argv[]) {
   }
 
   tcgetattr(dev, &oldtio);        /* save current serial port settings */
-  bzero(&newtio, sizeof(newtio)); /* clear struct for new port settings */
+  memset(&newtio, 0, sizeof(newtio)); /* clear struct for new port settings */
   /* setup new serial port settings */
   newtio.c_cflag = SERIAL_SPEED | CS8 | CLOCAL | CREAD;
   newtio.c_iflag = IGNPAR | ICRNL;
