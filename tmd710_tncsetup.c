@@ -85,8 +85,9 @@ int main(int argc, char *argv[]) {
   while (1) {
     clflag = getopt_long(argc, argv, "m:p:b:c:d:B:S:i:hsV", long_options,
                          &flag_index);
-    if (clflag == -1)
+    if (clflag == -1) {
       break;
+    }
 
     switch (clflag) {
     case 'V':
@@ -350,14 +351,18 @@ int main(int argc, char *argv[]) {
   tcsetattr(dev, TCSANOW, &oldtio); /* restore previous serial port settings */
   close(dev);
 
-  if (callsign != NULL)
+  if (callsign != NULL) {
     free(command_mycall);
-  if (maxframe_int)
+  }
+  if (maxframe_int) {
     free(command_maxframe);
-  if (paclen_int >= 0)
+  }
+  if (paclen_int >= 0) {
     free(command_paclen);
-  if (txdelay_int >= 0)
+  }
+  if (txdelay_int >= 0) {
     free(command_txdelay);
+  }
 
   exit(0);
 }
