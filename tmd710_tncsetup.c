@@ -44,14 +44,14 @@ int main(int argc, char *argv[]) {
   int dev;
   int flag_index; /* flag index in argv[] */
   int clflag;     /* holds codes for command line flags */
-  int initmode_int = 0;
+  unsigned long initmode_int = 0;
   int soft_flow = 0;
   int hard_flow = 0;
-  int maxframe_int = 0;
-  int paclen_int = -1;
-  int baudrate_int = 0;
-  int txdelay_int = -1;
-  int band_int = -1;
+  unsigned long maxframe_int = 0;
+  long paclen_int = -1;
+  unsigned long baudrate_int = 0;
+  long txdelay_int = -1;
+  long band_int = -1;
   struct termios oldtio, newtio;
   char band_0[] = "TN 0,0\r";
   char band_a[] = "TN 2,0\r";
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
         return -1;
       }
       band = optarg;
-      band_int = atoi(band);
+      band_int = strtol(band, NULL, 10);
       if (band_int < 0 || band_int > 1) {
         fprintf(stderr, "Error: invalid band parameter specified ! Valid "
                         "values are 0 for Band A or 1 for Band B.\n");
@@ -133,8 +133,8 @@ int main(int argc, char *argv[]) {
       break;
     case 'i':
       initmode = optarg;
-      initmode_int = atoi(initmode);
-      if (initmode_int < 0 || initmode_int > 2) {
+      initmode_int = strtoul(initmode, NULL, 10);
+      if (initmode_int > 2) {
         fprintf(stderr, "Error: invalid INITMODE parameter specified !\n");
         return -1;
       }
@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
         return -1;
       }
       maxframe = optarg;
-      maxframe_int = atoi(maxframe);
+      maxframe_int = strtoul(maxframe, NULL, 10);
       if (maxframe_int < 1 || maxframe_int > 7) {
         fprintf(stderr, "Error: invalid MAXFRAME parameter specified !\n");
         return -1;
@@ -157,7 +157,7 @@ int main(int argc, char *argv[]) {
         return -1;
       }
       paclen = optarg;
-      paclen_int = atoi(paclen);
+      paclen_int = strtol(paclen, NULL, 10);
       if (paclen_int < 0 || paclen_int > 255) {
         fprintf(stderr, "Error: invalid PACLEN parameter specified !\n");
         return -1;
@@ -169,7 +169,7 @@ int main(int argc, char *argv[]) {
         return -1;
       }
       baudrate = optarg;
-      baudrate_int = atoi(baudrate);
+      baudrate_int = strtoul(baudrate, NULL, 10);
       if (baudrate_int != 1200 && baudrate_int != 9600) {
         fprintf(stderr, "Error: invalid HBAUD parameter specified !\n");
         return -1;
@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
         return -1;
       }
       txdelay = optarg;
-      txdelay_int = atoi(txdelay);
+      txdelay_int = strtol(txdelay, NULL, 10);
       if (txdelay_int < 0 || txdelay_int > 120) {
         fprintf(stderr, "Error: invalid TXDELAY parameter specified !\n");
         return -1;
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (maxframe_int) {
-    if (snprintf(command_maxframe, MAX_COMMAND_LENGTH, "MAXFRAME %u\r",
+    if (snprintf(command_maxframe, MAX_COMMAND_LENGTH, "MAXFRAME %lu\r",
                  maxframe_int) < 0) {
       printf("snprintf error !\n");
       return 1;
@@ -245,7 +245,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (paclen_int >= 0) {
-    if (snprintf(command_paclen, MAX_COMMAND_LENGTH, "PACLEN %u\r",
+    if (snprintf(command_paclen, MAX_COMMAND_LENGTH, "PACLEN %lu\r",
                  paclen_int) < 0) {
       printf("snprintf error !\n");
       return 1;
@@ -253,7 +253,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (txdelay_int >= 0) {
-    if (snprintf(command_txdelay, MAX_COMMAND_LENGTH, "TXDELAY %u\r",
+    if (snprintf(command_txdelay, MAX_COMMAND_LENGTH, "TXDELAY %lu\r",
                  txdelay_int) < 0) {
       printf("snprintf error !\n");
       return 1;
