@@ -54,20 +54,20 @@ int main(int argc, char *argv[]) {
   int txdelay_int = -1;
   int band_int = -1;
   struct termios oldtio, newtio;
-  char band_0[7] = "TN 0,0\r";
-  char band_a[7] = "TN 2,0\r";
-  char band_b[7] = "TN 2,1\r";
+  char band_0[] = "TN 0,0\r";
+  char band_a[] = "TN 2,0\r";
+  char band_b[] = "TN 2,1\r";
   char *command_mycall = NULL;
   char *command_maxframe = NULL;
   char *command_paclen = NULL;
   char *command_txdelay = NULL;
-  char command_tnc_off[5] = "TC 1\r";
-  char command_soft_flow[9] = "XFLOW ON\r";
-  char command_hard_flow[10] = "XFLOW OFF\r";
-  char command_baudrate_1200[11] = "HBAUD 1200\r";
-  char command_baudrate_9600[11] = "HBAUD 9600\r";
-  char command_kiss_on[8] = "KISS ON\r";
-  char command_restart[8] = "RESTART\r";
+  char command_tnc_off[] = "TC 1\r";
+  char command_soft_flow[] = "XFLOW ON\r";
+  char command_hard_flow[] = "XFLOW OFF\r";
+  char command_baudrate_1200[] = "HBAUD 1200\r";
+  char command_baudrate_9600[] = "HBAUD 9600\r";
+  char command_kiss_on[] = "KISS ON\r";
+  char command_restart[] = "RESTART\r";
   char *initmode = NULL;
   char *band = NULL;
   char *serial_port = NULL;
@@ -304,14 +304,14 @@ int main(int argc, char *argv[]) {
   tcflush(dev, TCIFLUSH);
   tcsetattr(dev, TCSANOW, &newtio);
 
-  if (write(dev, command_tnc_off, 5) == -1) {
+  if (write(dev, command_tnc_off, strlen(command_tnc_off)) == -1) {
     return 1;
   }
   sleep(1);
 
   /*shut off the TNC if requested */
   if (initmode_int == 1) {
-    if (write(dev, band_0, 7) == -1) {
+    if (write(dev, band_0, strlen(band_0)) == -1) {
       return 1;
     }
     sleep(2);
@@ -323,23 +323,25 @@ int main(int argc, char *argv[]) {
      it settle before making any changes */
 
   if (band_int == 0) {
-    if (write(dev, band_a, 7) == -1) {
+    if (write(dev, band_a, strlen(band_a)) == -1) {
       return 1;
     }
     sleep(3);
   } else if (band_int == 1) {
-    if (write(dev, band_b, 7) == -1) {
+    if (write(dev, band_b, strlen(band_b)) == -1) {
       return 1;
     }
     sleep(3);
   }
   if (baudrate_int == 1200) {
-    if (write(dev, command_baudrate_1200, 11) == -1) {
+    if (write(dev, command_baudrate_1200, strlen(command_baudrate_1200)) ==
+        -1) {
       return 1;
     }
     sleep(1);
   } else if (baudrate_int == 9600) {
-    if (write(dev, command_baudrate_9600, 11) == -1) {
+    if (write(dev, command_baudrate_9600, strlen(command_baudrate_9600)) ==
+        -1) {
       return 1;
     }
     sleep(1);
@@ -363,12 +365,12 @@ int main(int argc, char *argv[]) {
     sleep(1);
   }
   if (soft_flow) {
-    if (write(dev, command_soft_flow, 9) == -1) {
+    if (write(dev, command_soft_flow, strlen(command_soft_flow)) == -1) {
       return 1;
     }
     sleep(1);
   } else if (hard_flow) {
-    if (write(dev, command_hard_flow, 10) == -1) {
+    if (write(dev, command_hard_flow, strlen(command_hard_flow)) == -1) {
       return 1;
     }
     sleep(1);
@@ -384,11 +386,11 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   if (initmode_int == 0) {
-    if (write(dev, command_kiss_on, 8) == -1) {
+    if (write(dev, command_kiss_on, strlen(command_kiss_on)) == -1) {
       return 1;
     }
     sleep(1);
-    if (write(dev, command_restart, 8) == -1) {
+    if (write(dev, command_restart, strlen(command_restart)) == -1) {
       return 1;
     }
     sleep(1);
