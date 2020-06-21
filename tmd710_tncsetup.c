@@ -266,7 +266,10 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  tcgetattr(dev, &oldtio);        /* save current serial port settings */
+  if (tcgetattr(dev, &oldtio) == -1) { /* save current serial port settings */
+    printf("tcgetattr error !\n");
+    return 1;
+  }
   memset(&newtio, 0, sizeof(newtio)); /* clear struct for new port settings */
   /* setup new serial port settings */
   newtio.c_cflag = SERIAL_SPEED | CS8 | CLOCAL | CREAD;
@@ -280,8 +283,14 @@ int main(int argc, char *argv[]) {
   newtio.c_cc[VEOL2] = 0; /* '\0' */
 
   /* clean the line and activate the settings for the port */
-  tcflush(dev, TCIFLUSH);
-  tcsetattr(dev, TCSANOW, &newtio);
+  if (tcflush(dev, TCIFLUSH) == -1) {
+    printf("tcflush error !\n");
+    return 1;
+  }
+  if (tcsetattr(dev, TCSANOW, &newtio) == -1) {
+    printf("tcsetattr error !\n");
+    return 1;
+  }
 
   if (write(dev, command_tnc_off, strlen(command_tnc_off)) == -1) {
     return 1;
@@ -375,8 +384,15 @@ int main(int argc, char *argv[]) {
     sleep(1);
   }
 
-  tcsetattr(dev, TCSANOW, &oldtio); /* restore previous serial port settings */
-  close(dev);
+  /* restore previous serial port settings */
+  if (tcsetattr(dev, TCSANOW, &oldtio) == -1) {
+    printf("tcsetattr error !\n");
+    return 1;
+  }
+  if (close(dev) == -1) {
+    printf("close error !\n");
+    return 1;
+  }
 
   return 0;
 }
