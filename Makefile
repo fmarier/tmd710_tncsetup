@@ -9,7 +9,7 @@ $(APP): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(CFLAGS) $(LDFLAGS)
 
 %.o: %.c
-	$(CC) -o $@ -c $< $(CFLAGS)
+	$(CC) -g -o $@ -c $< $(CFLAGS)
 
 clean:
 	rm -f $(APP) *.o
