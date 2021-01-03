@@ -2,8 +2,8 @@ APP = tmd710_tncsetup
 VERSION := $(shell grep 'VERSION "' $(APP).c  | cut -d\" -f2)
 MANPAGE = $(APP).1
 OBJS = tmd710_tncsetup.o
-CFLAGS = -O2 -Wall -Werror -fstack-protector-strong -Wformat -Wformat-security -Werror=format-security -D_FORTIFY_SOURCE=2 -fPIE
-LDFLAGS = -Wl,-z,now -Wl,-z,relro -Wl,-pie -Wl,--hash-style=gnu
+CFLAGS ?= -O2 -Wall -Werror -fstack-protector-strong -Wformat -Wformat-security -Werror=format-security -D_FORTIFY_SOURCE=2 -fPIE
+LDFLAGS ?= -Wl,-z,now -Wl,-z,relro -Wl,-pie -Wl,--hash-style=gnu
 
 prefix ?= /usr/local
 bindir = $(DESTDIR)$(prefix)/bin/
