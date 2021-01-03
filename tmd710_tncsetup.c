@@ -38,7 +38,7 @@
 #define SERIAL_SPEED B9600
 #define MAX_COMMAND_LENGTH 128
 
-#define VERSION "1.13"
+#define VERSION "1.13.1"
 
 int main(int argc, char *argv[]) {
   int dev;
