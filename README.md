@@ -18,7 +18,7 @@ The following radios are known to work with this tool:
 ## Copyright
 
 ```
-Copyright © 2020 Francois Marier VA7GPL (va7gpl@fmarier.org)
+Copyright © 2020-2021 Francois Marier VA7GPL (va7gpl@fmarier.org)
 Copyright © 2010-2018 Guido Trentalancia IZ6RDB (iz6rdb@trentalancia.com)
 Copyright © 2010 David Ranch KI6ZHD (dranch@trinnet.net)
 
