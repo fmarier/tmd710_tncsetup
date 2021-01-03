@@ -1,4 +1,5 @@
 APP = tmd710_tncsetup
+VERSION := $(shell grep 'VERSION "' $(APP).c  | cut -d\" -f2)
 MANPAGE = $(APP).1
 OBJS = tmd710_tncsetup.o
 CFLAGS = -O2 -Wall -Werror -fstack-protector-strong -Wformat -Wformat-security -Werror=format-security -D_FORTIFY_SOURCE=2 -fPIE
@@ -29,7 +30,11 @@ uninstall:
 	rm $(bindir)$(APP)
 	rm $(mandir)$(MANPAGE).gz
 
+dist:
+	git commit -a -m "Bump version for release"
+	git tag -s $(APP)-$(VERSION) -m "$(VERSION) release"
+
 clean:
 	rm -f $(APP) $(MANPAGE).gz *.o
 
-.PHONY: clean
+.PHONY: clean dist
