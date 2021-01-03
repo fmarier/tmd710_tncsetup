@@ -1,0 +1,77 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2021 Francois Marier <va7gpl@fmarier.org>
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH tmd710_tncsetup 1 "3 Jan 2021"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+tmd710_tncsetup \- tool to configure the TNC on several Kenwood radios
+.SH SYNOPSIS
+.B tmd710_tncsetup
+.RI [ options ]
+.SH DESCRIPTION
+This manual page documents briefly the
+.B tmd710-tncsetup
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+.SH OPTIONS
+These programs follow the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+You must supply at least two arguments: the band (0 for Band A, 1 for Band B) and the serial port
+.TP
+.B \-B, \-\-band
+the frequency band to use (0 for Band A or 1 for Band B)
+.TP
+.B \-S, \-\-serialport
+the serial port to use for communication with the operation panel
+.TP
+.B \-b, \-\-baudrate
+sets the HBAUD parameter (TNC speed, 1200 or 9600 baud)
+.TP
+.B \-m, \-\-maxframe
+sets the MAXFRAME parameter (1-7)
+.TP
+.B \-p, \-\-paclen
+sets the PACLEN parameter (0-255)
+.TP
+.B \-d, \-\-txdelay
+sets the TXDELAY parameter (0-120)
+.TP
+.B \-s, \-\-software-flow
+configure the TNC for software flow-control
+.TP
+.B \-h, \-\-hardware-flow
+configure the TNC for hardware flow-control
+.TP
+.B \-c, \-\-callsign
+configure the callsign
+.TP
+.B \-i
+Initialize TNC (default is into Packet KISS mode)
+1 : TNC off
+2 : Packet command mode only
+.TP
+.B \-V, \-\-version
+display the version
+.br
+.SH AUTHOR
+Written by Francois Marier <va7gpl@fmarier.org>
+.sp
+Project Homepage: https://github.com/fmarier/tmd710_tncsetup
