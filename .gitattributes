@@ -2,3 +2,4 @@
 .github export-ignore
 .gitignore export-ignore
 RELEASE.md export-ignore
+sonar-project.properties export-ignore
