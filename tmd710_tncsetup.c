@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
   unsigned long baudrate_int = 0;
   long txdelay_int = -1;
   long band_int = -1;
-  struct termios oldtio, newtio;
+  struct termios oldtio;
+  struct termios newtio;
   const char band_0[] = "TN 0,0\r";
   const char band_a[] = "TN 2,0\r";
   const char band_b[] = "TN 2,1\r";
@@ -67,14 +68,14 @@ int main(int argc, char *argv[]) {
   const char command_baudrate_9600[] = "HBAUD 9600\r";
   const char command_kiss_on[] = "KISS ON\r";
   const char command_restart[] = "RESTART\r";
-  char *initmode = NULL;
-  char *band = NULL;
-  char *serial_port = NULL;
-  char *maxframe = NULL;
-  char *paclen = NULL;
-  char *baudrate = NULL;
-  char *txdelay = NULL;
-  char *callsign = NULL;
+  const char *initmode = NULL;
+  const char *band = NULL;
+  const char *serial_port = NULL;
+  const char *maxframe = NULL;
+  const char *paclen = NULL;
+  const char *baudrate = NULL;
+  const char *txdelay = NULL;
+  const char *callsign = NULL;
   const struct option long_options[] = {
       {"maxframe", 1, 0, 'm'},      {"paclen", 1, 0, 'p'},
       {"hardware-flow", 0, 0, 'h'}, {"software-flow", 0, 0, 's'},
@@ -193,6 +194,9 @@ int main(int argc, char *argv[]) {
       }
       callsign = optarg;
       break;
+    default:
+      // Ignore unknown arguments
+      break;
     }
   }
 
@@ -227,36 +231,28 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if (callsign != NULL) {
-    if (snprintf(command_mycall, MAX_COMMAND_LENGTH, "MYCALL %s\r", callsign) <
-        0) {
-      printf("snprintf error !\n");
-      return 1;
-    }
+  if ((callsign != NULL) && (snprintf(command_mycall, MAX_COMMAND_LENGTH,
+                                      "MYCALL %s\r", callsign) < 0)) {
+    printf("snprintf error !\n");
+    return 1;
   }
 
-  if (maxframe_int != 0) {
-    if (snprintf(command_maxframe, MAX_COMMAND_LENGTH, "MAXFRAME %lu\r",
-                 maxframe_int) < 0) {
-      printf("snprintf error !\n");
-      return 1;
-    }
+  if ((maxframe_int != 0) && (snprintf(command_maxframe, MAX_COMMAND_LENGTH,
+                                       "MAXFRAME %lu\r", maxframe_int) < 0)) {
+    printf("snprintf error !\n");
+    return 1;
   }
 
-  if (paclen_int >= 0) {
-    if (snprintf(command_paclen, MAX_COMMAND_LENGTH, "PACLEN %lu\r",
-                 paclen_int) < 0) {
-      printf("snprintf error !\n");
-      return 1;
-    }
+  if ((paclen_int >= 0) && (snprintf(command_paclen, MAX_COMMAND_LENGTH,
+                                     "PACLEN %lu\r", paclen_int) < 0)) {
+    printf("snprintf error !\n");
+    return 1;
   }
 
-  if (txdelay_int >= 0) {
-    if (snprintf(command_txdelay, MAX_COMMAND_LENGTH, "TXDELAY %lu\r",
-                 txdelay_int) < 0) {
-      printf("snprintf error !\n");
-      return 1;
-    }
+  if ((txdelay_int >= 0) && (snprintf(command_txdelay, MAX_COMMAND_LENGTH,
+                                      "TXDELAY %lu\r", txdelay_int) < 0)) {
+    printf("snprintf error !\n");
+    return 1;
   }
 
   dev = open(serial_port, O_RDWR | O_NOCTTY);
