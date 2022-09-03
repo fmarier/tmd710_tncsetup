@@ -1,7 +1,5 @@
 # tmd710_tncsetup
 
-[![Build Status](https://travis-ci.org/fmarier/tmd710_tncsetup.svg?branch=master)](https://travis-ci.org/fmarier/tmd710_tncsetup)
-
 This is a tool to configure the TNC on several Kenwood radios.
 
 See <https://feeding.cloud.geek.nz/posts/using-kenwood-th-d72a-with-pat-linux-ax25/>
